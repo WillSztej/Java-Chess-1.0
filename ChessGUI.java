@@ -16,6 +16,8 @@ public class ChessGUI {
     static int row = 0;
     static int col = 0;
 
+    static boolean white_move = true;
+
     public ChessGUI(PlayingPiece[][] board) {
 
         PlayingPiece[][] pieceBoard = board;
@@ -55,16 +57,25 @@ public class ChessGUI {
 
                 if (!(i >= 2 && i <= 5)) {
 
+                    boolean white = true;
+
                     String name = "";
 
                     //assign names for pawns, which take up all of row 1 and 6
 
                     if (i == 1) {
                         name = "whitePawn";
+                        this.pieceBoard[row][col] = new PlayingPiece(i, j, name, white);
+                        this.buttonBoard[row][col] = new JButton(name);
+                        this.guiPanel.add(this.buttonBoard[i][j]);
                     }
 
                     if (i == 6) {
                         name = "blackPawn";
+                        white = false;
+                        this.pieceBoard[row][col] = new PlayingPiece(i, j, name, white);
+                        this.buttonBoard[row][col] = new JButton(name);
+                        this.guiPanel.add(this.buttonBoard[i][j]);
                     }
 
                     // assign names for the first row
@@ -74,48 +85,79 @@ public class ChessGUI {
                             case 7:
                                 if (i == 0) {
                                     name = "whiteRook";
+                                    this.pieceBoard[row][col] = new PlayingPiece(i, j, name, white);
+                                    this.buttonBoard[row][col] = new JButton(name);
+                                    this.guiPanel.add(this.buttonBoard[i][j]);
                                 } else {
                                     name = "blackRook";
+                                    white = false;
+                                    this.pieceBoard[row][col] = new PlayingPiece(i, j, name, white);
+                                    this.buttonBoard[row][col] = new JButton(name);
+                                    this.guiPanel.add(this.buttonBoard[i][j]);
                                 }
                                 break;
                             case 1:
                             case 6:
                                 if (i == 0) {
                                     name = "whiteKnight";
+                                    this.pieceBoard[row][col] = new PlayingPiece(i, j, name, white);
+                                    this.buttonBoard[row][col] = new JButton(name);
+                                    this.guiPanel.add(this.buttonBoard[i][j]);
                                 } else {
                                     name = "blackKnight";
+                                    white = false;
+                                    this.pieceBoard[row][col] = new PlayingPiece(i, j, name, white);
+                                    this.buttonBoard[row][col] = new JButton(name);
+                                    this.guiPanel.add(this.buttonBoard[i][j]);
                                 }
                                 break;
                             case 2:
                             case 5:
                                 if (i == 0) {
                                     name = "whiteBishop";
+                                    this.pieceBoard[row][col] = new PlayingPiece(i, j, name, white);
+                                    this.buttonBoard[row][col] = new JButton(name);
+                                    this.guiPanel.add(this.buttonBoard[i][j]);
                                 } else {
                                     name = "blackKnight";
+                                    white = false;
+                                    this.pieceBoard[row][col] = new PlayingPiece(i, j, name, white);
+                                    this.buttonBoard[row][col] = new JButton(name);
+                                    this.guiPanel.add(this.buttonBoard[i][j]);
                                 }
                                 break;
                             case 4:
                                 if (i == 0) {
                                     name = "whiteQueen";
+                                    this.pieceBoard[row][col] = new PlayingPiece(i, j, name, white);
+                                    this.buttonBoard[row][col] = new JButton(name);
+                                    this.guiPanel.add(this.buttonBoard[i][j]);
                                 } else {
                                     name = "blackQueen";
+                                    white = false;
+                                    this.pieceBoard[row][col] = new PlayingPiece(i, j, name, white);
+                                    this.buttonBoard[row][col] = new JButton(name);
+                                    this.guiPanel.add(this.buttonBoard[i][j]);
                                 }
                                 break;
                             case 3:
                                 if (i == 0) {
                                     name = "whiteKing";
+                                    this.pieceBoard[row][col] = new PlayingPiece(i, j, name, white);
+                                    this.buttonBoard[row][col] = new JButton(name);
+                                    this.guiPanel.add(this.buttonBoard[i][j]);
                                 } else {
                                     name = "blackKing";
+                                    white = false;
+                                    this.pieceBoard[row][col] = new PlayingPiece(i, j, name, white);
+                                    this.buttonBoard[row][col] = new JButton(name);
+                                    this.guiPanel.add(this.buttonBoard[i][j]);
                                 }
                                 break;
                             default:
                                 break;
                         }
                     }
-
-                    this.pieceBoard[row][col] = new PlayingPiece(i, j, name);
-                    this.buttonBoard[row][col] = new JButton(name);
-                    this.guiPanel.add(this.buttonBoard[i][j]);
 
                 } else {
                     this.pieceBoard[row][col] = null;
@@ -135,12 +177,23 @@ public class ChessGUI {
             public void actionPerformed(ActionEvent e) {
                 if (!active) {
                     if (pieceBoard[0][0] != null) {
-                        curr_click = pieceBoard[0][0];
-                        active = true;
+                        // checks to see if button clicked is available to current player
+                        if (pieceBoard[0][0].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[0][0];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[0][0].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[0][0];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[0][0] == null) {
+                    if (pieceBoard[0][0] == null && checkValidMove(0 ,2)) {
 
                         // declare int coordinates for previously clicked button
                         int prev_x = curr_click.getRow();
@@ -177,12 +230,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[0][1] != null) {
-                        curr_click = pieceBoard[0][1];
-                        active = true;
+                        if (pieceBoard[0][1].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[0][1];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[0][1].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[0][1];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[0][1] == null) {
+                    if (pieceBoard[0][1] == null && checkValidMove(0 ,1)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -205,8 +268,18 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[0][2] != null) {
-                        curr_click = pieceBoard[0][2];
-                        active = true;
+                        if (pieceBoard[0][2].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[0][2];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[0][2].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[0][2];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
 
@@ -234,12 +307,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[0][3] != null) {
-                        curr_click = pieceBoard[0][3];
-                        active = true;
+                        if (pieceBoard[0][3].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[0][3];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[0][3].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[0][3];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[0][3] == null) {
+                    if (pieceBoard[0][3] == null && checkValidMove(0 ,3)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -262,12 +345,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[0][4] != null) {
-                        curr_click = pieceBoard[0][4];
-                        active = true;
+                        if (pieceBoard[0][4].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[0][4];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[0][4].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[0][4];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[0][4] == null) {
+                    if (pieceBoard[0][4] == null && checkValidMove(0 ,4)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -290,12 +383,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[0][5] != null) {
-                        curr_click = pieceBoard[0][5];
-                        active = true;
+                        if (pieceBoard[0][5].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[0][5];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[0][5].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[0][5];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[0][5] == null) {
+                    if (pieceBoard[0][5] == null && checkValidMove(0 ,5)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -318,12 +421,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[0][6] != null) {
-                        curr_click = pieceBoard[0][6];
-                        active = true;
+                        if (pieceBoard[0][6].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[0][6];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[0][6].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[0][6];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[0][6] == null) {
+                    if (pieceBoard[0][6] == null && checkValidMove(0 ,6)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -346,12 +459,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[0][7] != null) {
-                        curr_click = pieceBoard[0][7];
-                        active = true;
+                        if (pieceBoard[0][7].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[0][7];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[0][7].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[0][7];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[0][7] == null) {
+                    if (pieceBoard[0][7] == null && checkValidMove(0 ,7)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -373,12 +496,22 @@ public class ChessGUI {
             public void actionPerformed(ActionEvent e) {
                 if (!active) {
                     if (pieceBoard[1][0] != null) {
-                        curr_click = pieceBoard[1][0];
-                        active = true;
+                        if (pieceBoard[1][0].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[1][0];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[1][0].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[1][0];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[1][0] == null) {
+                    if (pieceBoard[1][0] == null && checkValidMove(1 ,0)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -399,12 +532,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[1][1] != null) {
-                        curr_click = pieceBoard[1][1];
-                        active = true;
+                        if (pieceBoard[1][1].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[1][1];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[1][1].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[1][1];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[1][1] == null) {
+                    if (pieceBoard[1][1] == null && checkValidMove(1 ,1)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -427,12 +570,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[1][2] != null) {
-                        curr_click = pieceBoard[1][2];
-                        active = true;
+                        if (pieceBoard[1][2].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[1][2];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[1][2].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[1][2];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[1][2] == null) {
+                    if (pieceBoard[1][2] == null && checkValidMove(1 ,2)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -455,12 +608,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[1][3] != null) {
-                        curr_click = pieceBoard[1][3];
-                        active = true;
+                        if (pieceBoard[1][3].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[1][3];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[1][3].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[1][3];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[1][3] == null) {
+                    if (pieceBoard[1][3] == null && checkValidMove(1 ,3)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -484,9 +647,19 @@ public class ChessGUI {
                 System.out.print("1, 4");
 
                 if (!active) {
-                    if (pieceBoard[1][4] != null) {
-                        curr_click = pieceBoard[1][4];
-                        active = true;
+                    if (pieceBoard[1][4] != null && checkValidMove(1 ,4)) {
+                        if (pieceBoard[1][4].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[1][4];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[1][4].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[1][4];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
@@ -513,12 +686,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[1][5] != null) {
-                        curr_click = pieceBoard[1][5];
-                        active = true;
+                        if (pieceBoard[1][5].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[1][5];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[1][5].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[1][5];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[1][5] == null) {
+                    if (pieceBoard[1][5] == null && checkValidMove(1 ,5)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -541,12 +724,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[1][6] != null) {
-                        curr_click = pieceBoard[1][6];
-                        active = true;
+                        if (pieceBoard[1][6].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[1][6];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[1][6].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[1][6];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[1][6] == null) {
+                    if (pieceBoard[1][6] == null && checkValidMove(1 ,6)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -569,12 +762,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[1][7] != null) {
-                        curr_click = pieceBoard[1][7];
-                        active = true;
+                        if (pieceBoard[1][7].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[1][7];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[1][7].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[1][7];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[1][7] == null) {
+                    if (pieceBoard[1][7] == null && checkValidMove(1 ,7)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -596,12 +799,22 @@ public class ChessGUI {
             public void actionPerformed(ActionEvent e) {
                 if (!active) {
                     if (pieceBoard[2][0] != null) {
-                        curr_click = pieceBoard[2][0];
-                        active = true;
+                        if (pieceBoard[2][0].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[2][0];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[2][0].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[2][0];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[2][0] == null) {
+                    if (pieceBoard[2][0] == null && checkValidMove(2 ,0)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -622,12 +835,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[2][1] != null) {
-                        curr_click = pieceBoard[2][1];
-                        active = true;
+                        if (pieceBoard[2][1].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[2][1];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[2][1].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[2][1];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[2][1] == null) {
+                    if (pieceBoard[2][1] == null && checkValidMove(2 ,1)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -650,8 +873,18 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[2][2] != null) {
-                        curr_click = pieceBoard[2][2];
-                        active = true;
+                        if (pieceBoard[2][2].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[2][2];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[2][2].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[2][2];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
@@ -678,8 +911,18 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[2][3] != null) {
-                        curr_click = pieceBoard[2][3];
-                        active = true;
+                        if (pieceBoard[2][3].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[2][3];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[2][3].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[2][3];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
@@ -706,8 +949,18 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[2][4] != null) {
-                        curr_click = pieceBoard[2][4];
-                        active = true;
+                        if (pieceBoard[2][4].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[2][4];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[2][4].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[2][4];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
@@ -734,8 +987,18 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[2][5] != null) {
-                        curr_click = pieceBoard[2][5];
-                        active = true;
+                        if (pieceBoard[2][5].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[2][5];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[2][5].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[2][5];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
@@ -762,8 +1025,18 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[2][6] != null) {
-                        curr_click = pieceBoard[2][6];
-                        active = true;
+                        if (pieceBoard[2][6].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[2][6];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[2][6].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[2][6];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
@@ -790,12 +1063,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[2][7] != null) {
-                        curr_click = pieceBoard[2][7];
-                        active = true;
+                        if (pieceBoard[2][7].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[2][7];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[2][7].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[2][7];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[2][7] == null) {
+                    if (pieceBoard[2][7] == null && checkValidMove(2 ,7)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -817,12 +1100,22 @@ public class ChessGUI {
             public void actionPerformed(ActionEvent e) {
                 if (!active) {
                     if (pieceBoard[3][0] != null) {
-                        curr_click = pieceBoard[3][0];
-                        active = true;
+                        if (pieceBoard[3][0].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[3][0];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[3][0].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[3][0];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[3][0] == null) {
+                    if (pieceBoard[3][0] == null && checkValidMove(3 ,0)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -843,12 +1136,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[3][1] != null) {
-                        curr_click = pieceBoard[3][1];
-                        active = true;
+                        if (pieceBoard[3][1].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[3][1];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[3][1].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[3][1];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[3][1] == null) {
+                    if (pieceBoard[3][1] == null && checkValidMove(3 ,1)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -871,12 +1174,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[3][2] != null) {
-                        curr_click = pieceBoard[3][2];
-                        active = true;
+                        if (pieceBoard[3][2].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[3][2];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[3][2].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[3][2];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[3][2] == null) {
+                    if (pieceBoard[3][2] == null && checkValidMove(3 ,2)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -899,8 +1212,18 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[3][3] != null) {
-                        curr_click = pieceBoard[3][3];
-                        active = true;
+                        if (pieceBoard[3][3].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[3][3];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[3][3].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[3][3];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
@@ -927,8 +1250,18 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[3][4] != null) {
-                        curr_click = pieceBoard[3][4];
-                        active = true;
+                        if (pieceBoard[3][4].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[3][4];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[3][4].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[3][4];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
@@ -955,8 +1288,18 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[3][5] != null) {
-                        curr_click = pieceBoard[3][5];
-                        active = true;
+                        if (pieceBoard[3][5].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[3][5];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[3][5].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[3][5];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
@@ -983,12 +1326,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[3][6] != null) {
-                        curr_click = pieceBoard[3][6];
-                        active = true;
+                        if (pieceBoard[3][6].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[3][6];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[3][6].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[3][6];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[3][6] == null) {
+                    if (pieceBoard[3][6] == null && checkValidMove(3 ,6)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1011,12 +1364,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[3][7] != null) {
-                        curr_click = pieceBoard[3][7];
-                        active = true;
+                        if (pieceBoard[3][7].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[3][7];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[3][7].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[3][7];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[3][7] == null) {
+                    if (pieceBoard[3][7] == null && checkValidMove(3 ,7)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1038,12 +1401,22 @@ public class ChessGUI {
             public void actionPerformed(ActionEvent e) {
                 if (!active) {
                     if (pieceBoard[4][0] != null) {
-                        curr_click = pieceBoard[4][0];
-                        active = true;
+                        if (pieceBoard[4][0].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[4][0];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[4][0].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[4][0];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[4][0] == null) {
+                    if (pieceBoard[4][0] == null && checkValidMove(4 ,0)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1064,12 +1437,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[4][1] != null) {
-                        curr_click = pieceBoard[4][1];
-                        active = true;
+                        if (pieceBoard[4][1].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[4][1];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[4][1].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[4][1];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[4][1] == null) {
+                    if (pieceBoard[4][1] == null && checkValidMove(4 ,1)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1092,12 +1475,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[4][2] != null) {
-                        curr_click = pieceBoard[4][2];
-                        active = true;
+                        if (pieceBoard[4][2].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[4][2];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[4][2].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[4][2];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[4][2] == null) {
+                    if (pieceBoard[4][2] == null && checkValidMove(4 ,2)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1120,12 +1513,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[4][3] != null) {
-                        curr_click = pieceBoard[4][3];
-                        active = true;
+                        if (pieceBoard[4][3].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[4][3];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[4][3].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[4][3];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[4][3] == null) {
+                    if (pieceBoard[4][3] == null && checkValidMove(4 ,3 )) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1148,12 +1551,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[4][4] != null) {
-                        curr_click = pieceBoard[4][4];
-                        active = true;
+                        if (pieceBoard[4][4].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[4][4];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[4][4].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[4][4];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[4][4] == null) {
+                    if (pieceBoard[4][4] == null && checkValidMove(4 ,4)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1176,12 +1589,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[4][5] != null) {
-                        curr_click = pieceBoard[4][5];
-                        active = true;
+                        if (pieceBoard[4][5].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[4][5];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[4][5].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[4][5];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[4][5] == null) {
+                    if (pieceBoard[4][5] == null && checkValidMove(4 ,5)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1204,12 +1627,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[4][6] != null) {
-                        curr_click = pieceBoard[4][6];
-                        active = true;
+                        if (pieceBoard[4][6].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[4][6];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[4][6].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[4][6];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[4][6] == null) {
+                    if (pieceBoard[4][6] == null && checkValidMove(4 ,6)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1232,12 +1665,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[4][7] != null) {
-                        curr_click = pieceBoard[4][7];
-                        active = true;
+                        if (pieceBoard[4][7].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[4][7];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[4][7].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[4][7];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[4][7] == null) {
+                    if (pieceBoard[4][7] == null && checkValidMove(4 ,7)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1259,12 +1702,22 @@ public class ChessGUI {
             public void actionPerformed(ActionEvent e) {
                 if (!active) {
                     if (pieceBoard[5][0] != null) {
-                        curr_click = pieceBoard[5][0];
-                        active = true;
+                        if (pieceBoard[5][0].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[5][0];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[5][0].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[5][0];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[5][0] == null) {
+                    if (pieceBoard[5][0] == null && checkValidMove(5 ,0)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1285,12 +1738,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[5][1] != null) {
-                        curr_click = pieceBoard[5][1];
-                        active = true;
+                        if (pieceBoard[5][1].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[5][1];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[5][1].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[5][1];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[5][1] == null) {
+                    if (pieceBoard[5][1] == null && checkValidMove(5 ,1)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1313,12 +1776,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[5][2] != null) {
-                        curr_click = pieceBoard[5][2];
-                        active = true;
+                        if (pieceBoard[5][2].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[5][2];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[5][2].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[5][2];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[5][2] == null) {
+                    if (pieceBoard[5][2] == null && checkValidMove(5 ,2)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1341,12 +1814,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[5][3] != null) {
-                        curr_click = pieceBoard[5][3];
-                        active = true;
+                        if (pieceBoard[5][3].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[5][3];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[5][3].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[5][3];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[5][3] == null) {
+                    if (pieceBoard[5][3] == null && checkValidMove(5 ,3)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1369,12 +1852,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[5][4] != null) {
-                        curr_click = pieceBoard[5][4];
-                        active = true;
+                        if (pieceBoard[5][4].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[5][4];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[5][4].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[5][4];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[5][4] == null) {
+                    if (pieceBoard[5][4] == null && checkValidMove(5 ,4)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1397,12 +1890,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[5][5] != null) {
-                        curr_click = pieceBoard[5][5];
-                        active = true;
+                        if (pieceBoard[5][5].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[5][5];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[5][5].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[5][5];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[5][5] == null) {
+                    if (pieceBoard[5][5] == null && checkValidMove(5 ,5)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1425,12 +1928,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[5][6] != null) {
-                        curr_click = pieceBoard[5][6];
-                        active = true;
+                        if (pieceBoard[5][6].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[5][6];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[5][6].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[5][6];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[5][6] == null) {
+                    if (pieceBoard[5][6] == null && checkValidMove(5 ,6)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1453,12 +1966,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[5][7] != null) {
-                        curr_click = pieceBoard[5][7];
-                        active = true;
+                        if (pieceBoard[5][7].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[5][7];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[5][7].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[5][7];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[5][7] == null) {
+                    if (pieceBoard[5][7] == null && checkValidMove(5 ,7)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1480,12 +2003,22 @@ public class ChessGUI {
             public void actionPerformed(ActionEvent e) {
                 if (!active) {
                     if (pieceBoard[6][0] != null) {
-                        curr_click = pieceBoard[6][0];
-                        active = true;
+                        if (pieceBoard[6][0].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[6][0];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[6][0].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[6][0];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[6][0] == null) {
+                    if (pieceBoard[6][0] == null && checkValidMove(6 ,0)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1506,12 +2039,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[6][1] != null) {
-                        curr_click = pieceBoard[6][1];
-                        active = true;
+                        if (pieceBoard[6][1].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[6][1];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[6][1].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[6][1];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[6][1] == null) {
+                    if (pieceBoard[6][1] == null && checkValidMove(6 ,1)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1534,12 +2077,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[6][2] != null) {
-                        curr_click = pieceBoard[6][2];
-                        active = true;
+                        if (pieceBoard[6][2].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[6][2];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[6][2].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[6][2];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[6][2] == null) {
+                    if (pieceBoard[6][2] == null && checkValidMove(6 ,2)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1562,12 +2115,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[6][3] != null) {
-                        curr_click = pieceBoard[6][3];
-                        active = true;
+                        if (pieceBoard[6][3].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[6][3];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[6][3].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[6][3];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[6][3] == null) {
+                    if (pieceBoard[6][3] == null && checkValidMove(6 ,3)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1590,12 +2153,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[6][4] != null) {
-                        curr_click = pieceBoard[6][4];
-                        active = true;
+                        if (pieceBoard[6][4].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[6][4];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[6][4].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[6][4];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[6][4] == null) {
+                    if (pieceBoard[6][4] == null && checkValidMove(6 ,4)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1618,12 +2191,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[6][5] != null) {
-                        curr_click = pieceBoard[6][5];
-                        active = true;
+                        if (pieceBoard[6][5].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[6][5];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[6][5].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[6][5];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[6][5] == null) {
+                    if (pieceBoard[6][5] == null && checkValidMove(6 ,5)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1646,12 +2229,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[6][6] != null) {
-                        curr_click = pieceBoard[6][6];
-                        active = true;
+                        if (pieceBoard[6][6].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[6][6];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[6][6].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[6][6];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[6][6] == null) {
+                    if (pieceBoard[6][6] == null && checkValidMove(6 ,6)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1674,12 +2267,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[6][7] != null) {
-                        curr_click = pieceBoard[6][7];
-                        active = true;
+                        if (pieceBoard[0][0].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[0][0];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[0][0].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[0][0];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[6][7] == null) {
+                    if (pieceBoard[6][7] == null && checkValidMove(6 ,7)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1701,12 +2304,22 @@ public class ChessGUI {
             public void actionPerformed(ActionEvent e) {
                 if (!active) {
                     if (pieceBoard[7][0] != null) {
-                        curr_click = pieceBoard[7][0];
-                        active = true;
+                        if (pieceBoard[7][0].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[7][0];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[7][0].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[7][0];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[7][0] == null) {
+                    if (pieceBoard[7][0] == null && checkValidMove(7 ,0)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1727,12 +2340,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[7][1] != null) {
-                        curr_click = pieceBoard[7][1];
-                        active = true;
+                        if (pieceBoard[7][1].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[7][1];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[7][1].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[7][1];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[7][1] == null) {
+                    if (pieceBoard[7][1] == null && checkValidMove(7 ,1)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1755,12 +2378,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[7][2] != null) {
-                        curr_click = pieceBoard[7][2];
-                        active = true;
+                        if (pieceBoard[7][2].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[7][2];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[7][2].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[7][2];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[7][2] == null) {
+                    if (pieceBoard[7][2] == null && checkValidMove(7 ,2)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1783,12 +2416,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[7][3] != null) {
-                        curr_click = pieceBoard[7][3];
-                        active = true;
+                        if (pieceBoard[7][3].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[7][3];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[7][3].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[7][3];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[7][3] == null) {
+                    if (pieceBoard[7][3] == null && checkValidMove(7 ,3)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1811,12 +2454,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[7][4] != null) {
-                        curr_click = pieceBoard[7][4];
-                        active = true;
+                        if (pieceBoard[7][4].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[7][4];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[7][4].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[7][4];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[7][4] == null) {
+                    if (pieceBoard[7][4] == null && checkValidMove(7 ,4)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1839,12 +2492,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[7][5] != null) {
-                        curr_click = pieceBoard[7][5];
-                        active = true;
+                        if (pieceBoard[7][5].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[7][5];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[7][5].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[7][5];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[7][5] == null) {
+                    if (pieceBoard[7][5] == null && checkValidMove(7 ,5)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1867,12 +2530,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[7][6] != null) {
-                        curr_click = pieceBoard[7][6];
-                        active = true;
+                        if (pieceBoard[7][6].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[7][6];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[7][6].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[7][6];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[7][6] == null) {
+                    if (pieceBoard[7][6] == null && checkValidMove(7 ,6)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1895,12 +2568,22 @@ public class ChessGUI {
 
                 if (!active) {
                     if (pieceBoard[7][7] != null) {
-                        curr_click = pieceBoard[7][7];
-                        active = true;
+                        if (pieceBoard[7][7].getColor()) {
+                            if (white_move) {
+                                curr_click = pieceBoard[7][7];
+                                active = true;
+                            }
+                        }
+                        if (!pieceBoard[7][7].getColor()) {
+                            if (!white_move) {
+                                curr_click = pieceBoard[7][7];
+                                active = true;
+                            }
+                        }
                     }
                 } else {
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[7][7] == null) {
+                    if (pieceBoard[7][7] == null && checkValidMove(7 ,7)) {
                         int prev_x = curr_click.getRow();
                         int prev_y = curr_click.getColumn();
                         buttonBoard[prev_x][prev_y].setText(" ");
@@ -1919,24 +2602,43 @@ public class ChessGUI {
 
     public boolean checkValidMove(int x, int y) {
 
-        System.out.print("hello");
 
         int prev_x = curr_click.getRow();
         int prev_y = curr_click.getColumn();
 
         if (curr_click.getName().equals("whitePawn")) {
 
-            System.out.print("hello");
+            if (!white_move) {
+                return false;
+            }
 
             if (x > prev_x + 1 || x <= prev_x) {
                 return false;
             }
-
             if (y < prev_y - 1 || y > prev_y + 1) {
                 return false;
             }
 
+            white_move = false;
             return true;
+        }
+
+        if (curr_click.getName().equals("blackPawn")) {
+
+            if (white_move) {
+                return false;
+            }
+
+            if (x < prev_x - 1 || x >= prev_x) {
+                return false;
+            }
+            if (y < prev_y - 1 || y > prev_y + 1) {
+                return false;
+            }
+
+            white_move = true;
+            return true;
+
         }
 
         return true;

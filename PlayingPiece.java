@@ -3,11 +3,13 @@ public class PlayingPiece {
     private int x;
     private int y;
     private String name;
+    private boolean white;
 
-    public PlayingPiece(int x, int y, String name) {
+    public PlayingPiece(int x, int y, String name, boolean white) {
         this.x = x;
         this.y = y;
         this.name = name;
+        this.white = white;
     }
 
     public String getName() {
@@ -20,6 +22,10 @@ public class PlayingPiece {
 
     public int getColumn() {
         return this.y;
+    }
+
+    public boolean getColor() {
+        return white;
     }
 
     public void setX(int x) {
