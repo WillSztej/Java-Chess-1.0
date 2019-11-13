@@ -39,6 +39,7 @@ public class ChessGUI {
 
         JPanel boardPanel = new JPanel(new GridLayout(8,8));
         boardPanel.setSize(300, 300);
+        boardPanel.setBackground(Color.black);
 
         this.boardPanel = boardPanel;
         this.guiFrame = guiFrame;
@@ -222,34 +223,38 @@ public class ChessGUI {
                         }
                     }
                 } else {
+
+                    // declare int coordinates for previously clicked button
+                    int prev_x = curr_click.getRow();
+                    int prev_y = curr_click.getColumn();
+
                     //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[0][0] == null && checkValidMove(0 ,0)) {
+                    if (checkValidMove(0 ,0)) {
 
-                        // declare int coordinates for previously clicked button
-                        int prev_x = curr_click.getRow();
-                        int prev_y = curr_click.getColumn();
+                        if (pieceBoard[0][0] == null || checkValidEat(0, 0)) {
 
-                        // set text of previously clicked button to " "
-                        buttonBoard[prev_x][prev_y].setIcon(empty);
+                            // set text of previously clicked button to " "
+                            buttonBoard[prev_x][prev_y].setIcon(empty);
 
-                        // set text of newly clicked button to the previously clicked
-                        buttonBoard[0][0].setIcon(getTexturePath(curr_click));
+                            // set text of newly clicked button to the previously clicked
+                            buttonBoard[0][0].setIcon(getTexturePath(curr_click));
 
-                        // set newly clicked piece object to previously clicked object in model
-                        pieceBoard[0][0] = curr_click;
-                        pieceBoard[0][0].setX(0);
-                        pieceBoard[0][0].setY(0);
+                            // set newly clicked piece object to previously clicked object in model
+                            pieceBoard[0][0] = curr_click;
+                            pieceBoard[0][0].setX(0);
+                            pieceBoard[0][0].setY(0);
 
-                        // set previously clicked object to null
-                        pieceBoard[prev_x][prev_y] = null;
+                            // set previously clicked object to null
+                            pieceBoard[prev_x][prev_y] = null;
 
-                        active = false;
-                        curr_click = null;
+                            active = false;
+                            curr_click = null;
 
-                        System.out.printf("Previous coordinate: (%d, %d)", prev_x, prev_y);
-                        System.out.printf("\nNew coordinate: (%d, %d)", pieceBoard[0][0].getRow(),
-                                pieceBoard[0][0].getColumn());
+                            System.out.printf("Previous coordinate: (%d, %d)", prev_x, prev_y);
+                            System.out.printf("\nNew coordinate: (%d, %d)", pieceBoard[0][0].getRow(),
+                                    pieceBoard[0][0].getColumn());
 
+                        }
                     }
                 }
             }
@@ -2045,18 +2050,21 @@ public class ChessGUI {
                         }
                     }
                 } else {
-                    //check valid move function, return boolean, add as && in if statement
-                    if (pieceBoard[6][0] == null && checkValidMove(6 ,0)) {
-                        int prev_x = curr_click.getRow();
-                        int prev_y = curr_click.getColumn();
-                        buttonBoard[prev_x][prev_y].setIcon(empty);
-                        buttonBoard[6][0].setIcon(getTexturePath(curr_click));
-                        pieceBoard[6][0] = curr_click;
-                        pieceBoard[6][0].setX(6);
-                        pieceBoard[6][0].setY(0);
-                        pieceBoard[prev_x][prev_y] = null;
-                        active = false;
-                        curr_click = null;
+
+                    if (checkValidMove(6,0)) {
+                        //check valid move function, return boolean, add as && in if statement
+                        if (pieceBoard[6][0] == null || checkValidEat(6, 0)) {
+                            int prev_x = curr_click.getRow();
+                            int prev_y = curr_click.getColumn();
+                            buttonBoard[prev_x][prev_y].setIcon(empty);
+                            buttonBoard[6][0].setIcon(getTexturePath(curr_click));
+                            pieceBoard[6][0] = curr_click;
+                            pieceBoard[6][0].setX(6);
+                            pieceBoard[6][0].setY(0);
+                            pieceBoard[prev_x][prev_y] = null;
+                            active = false;
+                            curr_click = null;
+                        }
                     }
                 }
             }
@@ -2662,6 +2670,27 @@ public class ChessGUI {
 
     }
 
+    public boolean checkMate() {
+        return false;
+    }
+
+    public boolean checkValidEat(int x, int y) {
+        if (pieceBoard[x][y].getColor()) {
+            if (curr_click.getColor()) {
+                return false;
+            } else {
+                return true;
+            }
+        } else if (!pieceBoard[x][y].getColor()) {
+            if (!curr_click.getColor()) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return true;
+    }
+
     public boolean checkValidMove(int x, int y) {
 
         int prev_x = curr_click.getRow();
@@ -2703,7 +2732,7 @@ public class ChessGUI {
 
             if (curr_click.isPawn()) {
 
-                if (x > prev_x - 2 || x >= prev_x) {
+                if (x < prev_x - 2 || x >= prev_x) {
                     return false;
                 }
                 if (y < prev_y - 1 || y > prev_y + 1) {
@@ -2799,6 +2828,8 @@ public class ChessGUI {
             int i = x;
             int j = y;
 
+            System.out.printf("\nStarting point: (%d, %d)", prev_x, prev_y);
+
             while (i != prev_x && j != prev_y) {
                 if (x < prev_x) {
                     if (y < prev_y) {
@@ -2824,12 +2855,14 @@ public class ChessGUI {
 
                 System.out.printf("\n(%d, %d)", i, j);
 
-                if (pieceBoard[i][j] != null) {
+                if (pieceBoard[i][j] != null && (i != prev_x) && (j != prev_y)) {
                     System.out.printf("\npiece is blocking path for bishop");
                     return false;
                 }
 
             }
+
+            System.out.println("\npath for bishop is valid");
 
             if (white_move) {
                 white_move = false;
@@ -2841,6 +2874,94 @@ public class ChessGUI {
 
         }
 
-        return true;
+        if (curr_click.getName().equals("whiteQueen") || curr_click.getName().equals("blackQueen")) {
+
+            if (y - prev_y != 0) {
+                if (Math.abs((x - prev_x) / (y - prev_y)) == 1) {
+
+                    int i = x;
+                    int j = y;
+
+                    while (i != prev_x && j != prev_y) {
+                        if (x < prev_x) {
+                            if (y < prev_y) {
+                                ++i;
+                                ++j;
+                            }
+                            if (y > prev_y) {
+                                ++i;
+                                --j;
+                            }
+                        }
+
+                        if (x > prev_x) {
+                            if (y < prev_y) {
+                                --i;
+                                ++j;
+                            }
+                            if (y > prev_y) {
+                                --i;
+                                --j;
+                            }
+                        }
+
+                        if (pieceBoard[i][j] != null && (i != prev_x) && (j != prev_y)) {
+                            return false;
+                        }
+
+                    }
+
+                }
+
+            } else {
+
+                if (x != prev_x) {
+                    if (y != prev_y) {
+                        return false;
+                    }
+                }
+
+                if (y != prev_y) {
+                        if (x != prev_x) {
+                            return false;
+                        }
+                }
+            }
+
+            if (white_move) {
+                white_move = false;
+            } else if (!white_move){
+                white_move = true;
+            }
+
+            return true;
+        }
+
+        if (curr_click.getName().equals("whiteKing") || curr_click.getName().equals("blackKing")) {
+
+            if (x == prev_x || x == prev_x + 1 || x == prev_x - 1) {
+                if (y != prev_y + 1 && y != prev_y - 1) {
+                    return false;
+                }
+
+            } else {
+                return false;
+            }
+            
+            if (white_move) {
+                white_move = false;
+            } else if (!white_move){
+                white_move = true;
+            }
+
+            return true;
+
+        }
+
+
+
+        return false;
     }
+
+
 }
