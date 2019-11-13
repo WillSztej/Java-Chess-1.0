@@ -4,12 +4,22 @@ public class PlayingPiece {
     private int y;
     private String name;
     private boolean white;
+    private boolean pawn_first_move;
 
     public PlayingPiece(int x, int y, String name, boolean white) {
         this.x = x;
         this.y = y;
         this.name = name;
         this.white = white;
+        this.pawn_first_move = false;
+    }
+
+    public PlayingPiece(int x, int y, String name, boolean white, boolean pawn_first_move) {
+        this.x = x;
+        this.y = y;
+        this.name = name;
+        this.white = white;
+        this.pawn_first_move = pawn_first_move;
     }
 
     public String getName() {
@@ -24,9 +34,11 @@ public class PlayingPiece {
         return this.y;
     }
 
-    public boolean getColor() {
-        return white;
-    }
+    public boolean getColor() { return this.white; }
+
+    public boolean isPawn() { return this.pawn_first_move;}
+
+    public void removeFirstPawnMove() { this.pawn_first_move = false; }
 
     public void setX(int x) {
         this.x = x;
