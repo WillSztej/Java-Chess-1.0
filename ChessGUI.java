@@ -5,30 +5,36 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.lang.Math;
-import javax.imageio.*;
-import java.awt.image.BufferedImage;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import java.io.*;
+
 
 
 public class ChessGUI {
 
-    PlayingPiece[][] pieceBoard;
-    JButton[][] buttonBoard;
+    private PlayingPiece[][] pieceBoard;
+    private JButton[][] buttonBoard;
 
     private JPanel boardPanel;
     private JFrame guiFrame;
-    static boolean active = false;
-    static PlayingPiece curr_click;
-    static int row = 0;
-    static int col = 0;
+    private boolean active = false;
+    private PlayingPiece curr_click;
+    private PlayingPiece black_king;
+    private PlayingPiece white_king;
 
-    static JLabel lowerIconW;
-    static JLabel lowerIconB;
-    static JPanel lowerPanel;
+    private int row;
+    private int col;
 
-    static boolean white_move = true;
+    private JLabel lowerIconW;
+    private JLabel lowerIconB;
+    private JPanel lowerPanel;
 
-    ImageIcon empty = new ImageIcon("src/piece_textures/empty.png");
+    private boolean white_move = true;
+
+    private ImageIcon empty = new ImageIcon("src/piece_textures/empty.png");
 
     public ChessGUI(PlayingPiece[][] board) {
 
@@ -68,22 +74,17 @@ public class ChessGUI {
         outerPanel.add(lowerPanel);
 
         ImageIcon upperPanelImg = new ImageIcon("src/gui_textures/upper_panel.png");
-        ImageIcon lowerPanelImgWhite = new ImageIcon("src/gui_textures/lower_white.png");
-        ImageIcon lowerPanelImgBlack = new ImageIcon("src/gui_textures/lower_black.png");
 
-        lowerIconW = new JLabel(lowerPanelImgWhite);
-        lowerIconB = new JLabel(lowerPanelImgBlack);
+        updateGUI(true);
+
         JLabel topIcon = new JLabel(upperPanelImg);
 
         lowerPanel.add(lowerIconW);
 
         upperPanel.add(topIcon);
 
-
         guiFrame.add(outerPanel);
 
-        //guiFrame.getContentPane().add("Center", outerPanel);
-        //guiFrame.add(outerPanel);
         guiFrame.setVisible(true);
 
         guiFrame.addComponentListener(new ComponentAdapter() {
@@ -95,26 +96,20 @@ public class ChessGUI {
 
     }
 
+    private void initializeBoard() {
 
-    public void initializeBoard() {
-
-        //intialize JButton 2D matrix
+        //initialize JButton 2D matrix
         //initialize PlayingPiece 2D matrix
-
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-
                 row = i;
                 col = j;
-
                 if (!(i >= 2 && i <= 5)) {
 
                     boolean white = true;
-
-                    String name = "";
+                    String name;
 
                     //assign names for pawns, which take up all of row 1 and 6
-
                     if (i == 1) {
                         name = "whitePawn";
                         this.pieceBoard[row][col] = new PlayingPiece(i, j, name, white, true);
@@ -209,6 +204,7 @@ public class ChessGUI {
                                     ImageIcon img = new ImageIcon("src/piece_textures/w_king.png");
                                     this.buttonBoard[row][col] = new JButton(img);
                                     this.boardPanel.add(this.buttonBoard[i][j]);
+                                    this.white_king = this.pieceBoard[row][col];
                                 } else {
                                     name = "blackKing";
                                     white = false;
@@ -216,6 +212,7 @@ public class ChessGUI {
                                     ImageIcon img = new ImageIcon("src/piece_textures/b_king.png");
                                     this.buttonBoard[row][col] = new JButton(img);
                                     this.boardPanel.add(this.buttonBoard[i][j]);
+                                    this.black_king = this.pieceBoard[row][col];
                                 }
                                 break;
                             default:
@@ -231,12 +228,29 @@ public class ChessGUI {
 
             }
         }
+        // for loop to initialize an alternating color pattern for buttons
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                JButton button = this.buttonBoard[i][j];
+                if ((j + i) % 2 == 0) {
+                    button.setBackground(Color.WHITE);
+                    button.setForeground(Color.WHITE);
+                    button.setOpaque(true);
+
+                } else {
+                    Color brown = new Color(18 ,12 , 7);
+                    button.setForeground(brown);
+                    button.setBackground(brown);
+                    button.setOpaque(true);
+                    button.setBorder(null);
+                }
+            }
+        }
 
         ActivateActionListeners();
     }
 
     public void checkMove(int row, int col) {
-
         if (!active) {
             if (pieceBoard[row][col] != null) {
                 // checks to see if button clicked is available to current player
@@ -244,31 +258,35 @@ public class ChessGUI {
                     if (white_move) {
                         curr_click = pieceBoard[row][col];
                         active = true;
+                    } else {
+                        curr_click = null;
+                        active = false;
                     }
                 }
                 if (!pieceBoard[row][col].getColor()) {
                     if (!white_move) {
                         curr_click = pieceBoard[row][col];
                         active = true;
+                    } else {
+                        curr_click = null;
+                        active = false;
                     }
                 }
             }
         } else {
-
             // declare int coordinates for previously clicked button
             int prev_x = curr_click.getRow();
             int prev_y = curr_click.getColumn();
-
             //check valid move function, return boolean, add as && in if statement
-            if (checkValidMove(row ,col) && (pieceBoard[row][col] == null || checkValidEat(row, col))) {
-
-                updateGUI();
+            if (checkValidMove(row, col) && checkValidEat(row, col)) {
 
                 // set text of previously clicked button to " "
                 buttonBoard[prev_x][prev_y].setIcon(empty);
+                buttonBoard[prev_x][prev_y].setBorder(null);
 
                 // set text of newly clicked button to the previously clicked
                 buttonBoard[row][col].setIcon(getTexturePath(curr_click));
+                buttonBoard[row][col].setBorder(null);
 
                 // set newly clicked piece object to previously clicked object in model
                 pieceBoard[row][col] = curr_click;
@@ -281,8 +299,10 @@ public class ChessGUI {
                 active = false;
                 curr_click = null;
 
+                updateGUI(false);
                 updateTurn();
 
+                checkmate();
             } else {
                 curr_click = null;
                 active = false;
@@ -290,7 +310,6 @@ public class ChessGUI {
         }
 
     }
-
 
     private void ActivateActionListeners() {
 
@@ -690,10 +709,6 @@ public class ChessGUI {
                 checkMove(7, 7);
             }
         });
-
-
-
-
     }
 
     public ImageIcon getTexturePath(PlayingPiece piece) {
@@ -725,63 +740,532 @@ public class ChessGUI {
             default:
                 break;
         }
-
         return null;
+    }
+
+    public boolean inDanger(int x, int y, boolean white) {
+        int row = x;
+        int col = y;
+        //check for pawn
+        try {
+            if (pieceBoard[row + 1][col + 1] != null || pieceBoard[row + 1][col - 1] != null) {
+                if (pieceBoard[row + 1][col + 1] != null) {
+                    if (pieceBoard[row + 1][col + 1].getName().equals("blackPawn")) {
+                        if (white) {
+                            return true;
+                        }
+                    }
+                    if (pieceBoard[row + 1][col + 1].getName().equals("whitePawn")) {
+                        if (!white) {
+                            return true;
+                        }
+                    }
+                }
+                if (pieceBoard[row + 1][col - 1] != null) {
+                    if (pieceBoard[row + 1][col - 1].getName().equals("blackPawn")) {
+                        if (white) {
+                            return true;
+                        }
+                    }
+                    if (pieceBoard[row + 1][col - 1].getName().equals("whitePawn")) {
+                        if (!white) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        } catch (IndexOutOfBoundsException e) {
+        }
+
+        //check for bishop or queen
+        row = x;
+        col = y;
+
+        ++row;
+        ++col;
+        while (row != 8 && col != 8) {
+            if (pieceBoard[row][col] != null) {
+                if (pieceBoard[row][col].getName().equals("blackBishop")
+                        || pieceBoard[row][col].getName().equals("blackQueen")) {
+                    if (white) {
+                        return true;
+                    }
+                } else if (pieceBoard[row][col].getName().equals("whiteBishop")
+                        || pieceBoard[row][col].getName().equals("whiteQueen"))  {
+                    if (!white) {
+                        return true;
+                    }
+                } else {
+                    break;
+                }
+            }
+            ++row;
+            ++col;
+        }
+
+        row = x;
+        col = y;
+
+        ++row;
+        --col;
+        while (row != 8 && col >= 0) {
+            if (pieceBoard[row][col] != null) {
+                if (pieceBoard[row][col].getName().equals("blackBishop")
+                        || pieceBoard[row][col].getName().equals("blackQueen")) {
+                    if (white) {
+                        return true;
+                    }
+                } else if (pieceBoard[row][col].getName().equals("whiteBishop")
+                        || pieceBoard[row][col].getName().equals("whiteQueen")) {
+                    if (!white) {
+                        return true;
+                    }
+                } else {
+                    break;
+                }
+            }
+            ++row;
+            --col;
+        }
+
+        row = x;
+        col = y;
+
+        --row;
+        ++col;
+        while (row >= 0 && col != 8) {
+            if (pieceBoard[row][col] != null) {
+                if (pieceBoard[row][col].getName().equals("blackBishop")
+                        || pieceBoard[row][col].getName().equals("blackQueen")) {
+                    if (white) {
+                        return true;
+                    }
+                } else if (pieceBoard[row][col].getName().equals("whiteBishop")
+                        || pieceBoard[row][col].getName().equals("whiteQueen")) {
+                    if (!white) {
+                        return true;
+                    }
+                } else {
+                    break;
+                }
+            }
+            --row;
+            ++col;
+        }
+
+        row = x;
+        col = y;
+
+        --row;
+        --col;
+        while (row >= 0 && col >= 0) {
+            if (pieceBoard[row][col] != null) {
+                if (pieceBoard[row][col].getName().equals("blackBishop")
+                        || pieceBoard[row][col].getName().equals("blackQueen")) {
+                    if (white) {
+                        return true;
+                    }
+                } else if (pieceBoard[row][col].getName().equals("whiteBishop")
+                        || pieceBoard[row][col].getName().equals("whiteQueen")) {
+                    if (!white) {
+                        return true;
+                    }
+                } else {
+                    break;
+                }
+            }
+            --row;
+            --col;
+        }
+
+        //check for rook or queen
+        row = x;
+        col = y;
+
+        --row;
+        while (row >= 0) {
+            if (pieceBoard[row][col] != null) {
+                if (pieceBoard[row][col].getName().equals("blackRook")
+                        || pieceBoard[row][col].getName().equals("blackQueen")) {
+                    if (white) {
+                        return true;
+                    }
+                } else if (pieceBoard[row][col].getName().equals("whiteRook")
+                        || pieceBoard[row][col].getName().equals("whiteQueen")) {
+                    if (!white) {
+                        return true;
+                    }
+                } else {
+                    break;
+                }
+            }
+            --row;
+        }
+
+        row = x;
+        col = y;
+
+        ++row;
+        while (row != 8) {
+            if (pieceBoard[row][col] != null) {
+                if (pieceBoard[row][col].getName().equals("blackRook")
+                        || pieceBoard[row][col].getName().equals("blackQueen")) {
+                    if (white) {
+                        return true;
+                    }
+                } else if (pieceBoard[row][col].getName().equals("whiteRook")
+                        || pieceBoard[row][col].getName().equals("whiteQueen")) {
+                    if (!white) {
+                        return true;
+                    }
+                } else {
+                    break;
+                }
+            }
+            ++row;
+        }
+
+        row = x;
+        col = y;
+
+        --col;
+        while (col >= 0) {
+            if (pieceBoard[row][col] != null) {
+                if (pieceBoard[row][col].getName().equals("blackRook")
+                        || pieceBoard[row][col].getName().equals("blackQueen")) {
+                    if (white) {
+                        return true;
+                    }
+                } else if (pieceBoard[row][col].getName().equals("whiteRook")
+                        || pieceBoard[row][col].getName().equals("whiteQueen")) {
+                    if (!white) {
+                        return true;
+                    }
+                } else {
+                    break;
+                }
+            }
+            --col;
+        }
+
+        row = x;
+        col = y;
+
+        ++col;
+        while (col != 8) {
+            if (pieceBoard[row][col] != null) {
+                if (pieceBoard[row][col].getName().equals("blackRook")
+                        || pieceBoard[row][col].getName().equals("blackQueen")) {
+                    if (white) {
+                        return true;
+                    }
+                } else if (pieceBoard[row][col].getName().equals("whiteRook")
+                        || pieceBoard[row][col].getName().equals("whiteQueen")) {
+                    if (!white) {
+                        return true;
+                    }
+                } else {
+                    break;
+                }
+            }
+            ++col;
+        }
+
+        //check for knight
+        row = x;
+        col = y;
+        if (row + 2 <= 7) {
+            if (col - 1 >= 0) {
+                if (pieceBoard[row + 2][col - 1] != null) {
+                    if (pieceBoard[row + 2][col - 1].getName().equals("blackKnight")) {
+                        if (white) {
+                            return true;
+                        }
+                    }
+                    if (pieceBoard[row + 2][col - 1].getName().equals("whiteKnight")) {
+                        if (!white) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            if (col + 1 <= 7) {
+                if (pieceBoard[row + 2][col + 1] != null) {
+                    if (pieceBoard[row + 2][col + 1].getName().equals("blackKnight")) {
+                        if (white) {
+                            return true;
+                        }
+                    }
+                    if (pieceBoard[row + 2][col + 1].getName().equals("whiteKnight")) {
+                        if (!white) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (row + 1 <= 7) {
+            if (col - 2 >= 0) {
+                if (pieceBoard[row + 1][col - 2] != null) {
+                    if (pieceBoard[row + 1][col - 2].getName().equals("blackKnight")) {
+                        if (white) {
+                            return true;
+                        }
+                    }
+                    if (pieceBoard[row + 1][col - 2].getName().equals("whiteKnight")) {
+                        if (!white) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            if (col + 2 <= 7) {
+                if (pieceBoard[row + 1][col + 2] != null) {
+                    if (pieceBoard[row + 1][col + 2].getName().equals("blackKnight")) {
+                        if (white) {
+                            return true;
+                        }
+                    }
+                    if (pieceBoard[row + 1][col + 2].getName().equals("whiteKnight")) {
+                        if (!white) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (row - 1 >= 0) {
+            if (col - 2 >= 0) {
+                if (pieceBoard[row - 1][col - 2] != null) {
+                    if (pieceBoard[row - 1][col - 2].getName().equals("blackKnight")) {
+                        if (white) {
+                            return true;
+                        }
+                    }
+                    if (pieceBoard[row - 1][col - 2].getName().equals("whiteKnight")) {
+                        if (!white) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            if (col + 2 <= 7) {
+                if (pieceBoard[row - 1][col + 2] != null) {
+                    if (pieceBoard[row - 1][col + 2].getName().equals("blackKnight")) {
+                        if (white) {
+                            return true;
+                        }
+                    }
+                    if (pieceBoard[row - 1][col + 2].getName().equals("whiteKnight")) {
+                        if (!white) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (row - 2 >= 0) {
+            if (col - 1 >= 0) {
+                if (pieceBoard[row - 2][col - 1] != null) {
+                    if (pieceBoard[row - 2][col - 1].getName().equals("blackKnight")) {
+                        if (white) {
+                            return true;
+                        }
+                    }
+                    if (pieceBoard[row - 2][col - 1].getName().equals("whiteKnight")) {
+                        if (!white) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            if (col + 1 <= 7) {
+                if (pieceBoard[row - 2][col + 1] != null) {
+                    if (pieceBoard[row - 2][col + 1].getName().equals("blackKnight")) {
+                        if (white) {
+                            return true;
+                        }
+                    }
+                    if (pieceBoard[row - 2][col + 1].getName().equals("whiteKnight")) {
+                        if (!white) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+
+    public void checkmate() {
+        //check to see if black king is under checkmate
+        if (inDanger(black_king.getRow(), black_king.getColumn(), false)) {
+            int row = black_king.getRow();
+            int col = black_king.getColumn();
+
+            for (int i = -1; i < 2; i++) {
+                for (int j = -1; j < 2; j++) {
+                    if (i != black_king.getRow() && j != black_king.getColumn()) {
+                        if (!(row + i <= 7 && row + i >= 0 && col + j <= 7 && col + j >= 0)) {
+                            continue;
+                        } else {
+                            if (pieceBoard[row + i][col + j] == null) {
+                                if (!inDanger(row + i, col + j, false)) {
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // WHITE WINS
+            System.out.println("white wins");
+            updateCheckmateGUI(true);
+        }
+
+        //check to see if white king is under checkmate
+        if (inDanger(white_king.getRow(), white_king.getColumn(), true)) {
+            int row = white_king.getRow();
+            int col = white_king.getColumn();
+
+            for (int i = -1; i < 2; i++) {
+                for (int j = -1; j < 2; j++) {
+                    if (i != white_king.getRow() && j != white_king.getColumn()) {
+                        if (!(row + i <= 7 && row + i >= 0 && col + j <= 7 && col + j >= 0)) {
+                            continue;
+                        } else {
+                            if (pieceBoard[row + i][col + j] == null) {
+                                if (!inDanger(row + i, col + j, true)) {
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // BLACK WINS
+            System.out.println("black wins");
+            updateCheckmateGUI(false);
+        }
+    }
+
+    public void updateCheckmateGUI(boolean white) {
+        if (white) {
+            lowerPanel.removeAll();
+            ImageIcon checkmate_white = new ImageIcon("src/gui_textures/checkmate_white.png");
+            lowerIconW = new JLabel(checkmate_white);
+            lowerPanel.add(lowerIconW);
+        } else {
+            lowerPanel.removeAll();
+            ImageIcon checkmate_black = new ImageIcon("src/gui_textures/checkmate_black.png");
+            lowerIconB = new JLabel(checkmate_black);
+            lowerPanel.add(lowerIconB);
+        }
 
     }
 
-    public boolean checkmate() {
-        return false;
+    public void updateGUI(boolean first) {
+        if (first) {
+            ImageIcon lowerPanelImgWhite = new ImageIcon("src/gui_textures/lower_white.png");
+            lowerIconW = new JLabel(lowerPanelImgWhite);
+            lowerPanel.add(lowerIconW);
+            return;
+        }
+        System.out.println("updating gui");
+        //if the previous move was a white turn -> change GUI to say black turn
+        if (white_move) {
+            lowerPanel.removeAll();
+            ImageIcon lowerPanelImgBlack = new ImageIcon("src/gui_textures/lower_black.png");
+            lowerIconB = new JLabel(lowerPanelImgBlack);
+            lowerPanel.add(lowerIconB);
+            System.out.println("updated the gui to black");
+        } else {
+            // if the previous move was a black turn -> change GUI to say white turn
+            lowerPanel.removeAll();
+            ImageIcon lowerPanelImgWhite = new ImageIcon("src/gui_textures/lower_white.png");
+            lowerIconW = new JLabel(lowerPanelImgWhite);
+            lowerPanel.add(lowerIconW);
+            System.out.println("updated the gui to white");
+        }
     }
 
     public void updateTurn() {
         if (white_move) {
             white_move = false;
-        } else if (!white_move){
+        } else {
             white_move = true;
         }
     }
 
-    public void updateGUI() {
-
-        //if the previous move was a white turn -> change GUI to say black turn
-        if (white_move) {
-
-            lowerPanel.remove(lowerIconW);
-
-            ImageIcon lowerPanelImgBlack = new ImageIcon("src/gui_textures/lower_black.png");
-            lowerIconB = new JLabel(lowerPanelImgBlack);
-
-            lowerPanel.add(lowerIconB);
-        } else {
-
-            // if the previous move was a black turn -> change GUI to say white turn
-
-            lowerPanel.remove(lowerIconB);
-
-            ImageIcon lowerPanelImgWhite = new ImageIcon("src/gui_textures/lower_white.png");
-            lowerIconW = new JLabel(lowerPanelImgWhite);
-
-            lowerPanel.add(lowerIconW);
+    public void playMoveSound() {
+        File move_wav = new File("src/sound_effects/move.wav");
+        try {
+            AudioInputStream audioInput = AudioSystem.getAudioInputStream(move_wav);
+            Clip move_clip = AudioSystem.getClip();
+            move_clip.open(audioInput);
+            move_clip.start();
+        } catch (Exception e) {
+            System.out.println("Audio output failed");
         }
-
     }
 
+    public void playEatSound() {
+        File eat_wav = new File("src/sound_effects/eat.wav");
+        try {
+            AudioInputStream audioInput = AudioSystem.getAudioInputStream(eat_wav);
+            Clip eat_clip = AudioSystem.getClip();
+            eat_clip.open(audioInput);
+            eat_clip.start();
+        } catch (Exception e) {
+            System.out.println("Audio output failed");
+        }
+    }
+
+
     public boolean checkValidEat(int x, int y) {
+        // Validating specific eating function for ONLY the pawn piece
+        if (curr_click.getName().equals("whitePawn") || curr_click.getName().equals("blackPawn")) {
+            if (pieceBoard[x][y] != null) {
+                if (y != curr_click.getColumn() + 1 && y != curr_click.getColumn() - 1) {
+                    return false;
+                }
+            } else {
+                if (y != curr_click.getColumn()) {
+                    return false;
+                }
+            }
+        }
+
+        if (pieceBoard[x][y] == null) {
+            playMoveSound();
+            return true;
+        }
+
         if (pieceBoard[x][y].getColor()) {
             if (curr_click.getColor()) {
                 return false;
             } else {
+                playEatSound();
                 return true;
             }
         } else if (!pieceBoard[x][y].getColor()) {
             if (!curr_click.getColor()) {
                 return false;
             } else {
+                playEatSound();
                 return true;
             }
         }
-        return true;
+
+        return false;
     }
 
     public boolean checkValidMove(int x, int y) {
@@ -917,8 +1401,6 @@ public class ChessGUI {
                     return false;
                 }
             }
-
-
             return true;
         }
 
@@ -1019,7 +1501,6 @@ public class ChessGUI {
                         return false;
                     }
                 }
-
             }
 
             return true;
@@ -1028,20 +1509,16 @@ public class ChessGUI {
         if (curr_click.getName().equals("whiteKing") || curr_click.getName().equals("blackKing")) {
 
             if (x == prev_x || x == prev_x + 1 || x == prev_x - 1) {
-                if (y != prev_y + 1 && y != prev_y - 1) {
+                if (y!= prev_y && y != prev_y + 1 && y != prev_y - 1) {
                     return false;
                 }
-
             } else {
                 return false;
             }
-
             return true;
 
         }
-
         return false;
     }
-
 
 }
