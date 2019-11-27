@@ -743,7 +743,7 @@ public class ChessGUI {
         return null;
     }
 
-    public boolean inDanger(int x, int y, boolean white) {
+    public boolean inDanger(int x, int y, boolean white, boolean second) {
         int row = x;
         int col = y;
         //check for pawn
@@ -751,25 +751,57 @@ public class ChessGUI {
             if (pieceBoard[row + 1][col + 1] != null || pieceBoard[row + 1][col - 1] != null) {
                 if (pieceBoard[row + 1][col + 1] != null) {
                     if (pieceBoard[row + 1][col + 1].getName().equals("blackPawn")) {
-                        if (white) {
-                            return true;
+                        if (second) {
+                            if (white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row + 1, col + 1, false, true)) {
+                                if (white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                     if (pieceBoard[row + 1][col + 1].getName().equals("whitePawn")) {
-                        if (!white) {
-                            return true;
+                        if (second) {
+                            if (!white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row + 1, col + 1, true, true)) {
+                                if (!white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
                 if (pieceBoard[row + 1][col - 1] != null) {
                     if (pieceBoard[row + 1][col - 1].getName().equals("blackPawn")) {
-                        if (white) {
-                            return true;
+                        if (second) {
+                            if (white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row + 1, col - 1, false, true)) {
+                                if (white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                     if (pieceBoard[row + 1][col - 1].getName().equals("whitePawn")) {
-                        if (!white) {
-                            return true;
+                        if (second) {
+                            if (!white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row + 1, col - 1, true, true)) {
+                                if (!white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
@@ -787,13 +819,29 @@ public class ChessGUI {
             if (pieceBoard[row][col] != null) {
                 if (pieceBoard[row][col].getName().equals("blackBishop")
                         || pieceBoard[row][col].getName().equals("blackQueen")) {
-                    if (white) {
-                        return true;
+                    if (second) {
+                        if (white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, false, true)) {
+                            if (white) {
+                                return true;
+                            }
+                        }
                     }
                 } else if (pieceBoard[row][col].getName().equals("whiteBishop")
                         || pieceBoard[row][col].getName().equals("whiteQueen"))  {
-                    if (!white) {
-                        return true;
+                    if (second) {
+                        if (!white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, true, true)) {
+                            if (!white) {
+                                return true;
+                            }
+                        }
                     }
                 } else {
                     break;
@@ -812,13 +860,29 @@ public class ChessGUI {
             if (pieceBoard[row][col] != null) {
                 if (pieceBoard[row][col].getName().equals("blackBishop")
                         || pieceBoard[row][col].getName().equals("blackQueen")) {
-                    if (white) {
-                        return true;
+                    if (second) {
+                        if (white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, false, true)) {
+                            if (white) {
+                                return true;
+                            }
+                        }
                     }
                 } else if (pieceBoard[row][col].getName().equals("whiteBishop")
                         || pieceBoard[row][col].getName().equals("whiteQueen")) {
-                    if (!white) {
-                        return true;
+                    if (second) {
+                        if (!white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, true, true)) {
+                            if (!white) {
+                                return true;
+                            }
+                        }
                     }
                 } else {
                     break;
@@ -837,13 +901,29 @@ public class ChessGUI {
             if (pieceBoard[row][col] != null) {
                 if (pieceBoard[row][col].getName().equals("blackBishop")
                         || pieceBoard[row][col].getName().equals("blackQueen")) {
-                    if (white) {
-                        return true;
+                    if (second) {
+                        if (white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, false, true)) {
+                            if (white) {
+                                return true;
+                            }
+                        }
                     }
                 } else if (pieceBoard[row][col].getName().equals("whiteBishop")
                         || pieceBoard[row][col].getName().equals("whiteQueen")) {
-                    if (!white) {
-                        return true;
+                    if (second) {
+                        if (!white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, true, true)) {
+                            if (!white) {
+                                return true;
+                            }
+                        }
                     }
                 } else {
                     break;
@@ -862,13 +942,29 @@ public class ChessGUI {
             if (pieceBoard[row][col] != null) {
                 if (pieceBoard[row][col].getName().equals("blackBishop")
                         || pieceBoard[row][col].getName().equals("blackQueen")) {
-                    if (white) {
-                        return true;
+                    if (second) {
+                        if (white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, false, true)) {
+                            if (white) {
+                                return true;
+                            }
+                        }
                     }
                 } else if (pieceBoard[row][col].getName().equals("whiteBishop")
                         || pieceBoard[row][col].getName().equals("whiteQueen")) {
-                    if (!white) {
-                        return true;
+                    if (second) {
+                        if (!white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, true, true)) {
+                            if (!white) {
+                                return true;
+                            }
+                        }
                     }
                 } else {
                     break;
@@ -887,13 +983,29 @@ public class ChessGUI {
             if (pieceBoard[row][col] != null) {
                 if (pieceBoard[row][col].getName().equals("blackRook")
                         || pieceBoard[row][col].getName().equals("blackQueen")) {
-                    if (white) {
-                        return true;
+                    if (second) {
+                        if (white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, false, true)) {
+                            if (white) {
+                                return true;
+                            }
+                        }
                     }
                 } else if (pieceBoard[row][col].getName().equals("whiteRook")
                         || pieceBoard[row][col].getName().equals("whiteQueen")) {
-                    if (!white) {
-                        return true;
+                    if (second) {
+                        if (!white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, true, true)) {
+                            if (!white) {
+                                return true;
+                            }
+                        }
                     }
                 } else {
                     break;
@@ -910,13 +1022,29 @@ public class ChessGUI {
             if (pieceBoard[row][col] != null) {
                 if (pieceBoard[row][col].getName().equals("blackRook")
                         || pieceBoard[row][col].getName().equals("blackQueen")) {
-                    if (white) {
-                        return true;
+                    if (second) {
+                        if (white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, false, true)) {
+                            if (white) {
+                                return true;
+                            }
+                        }
                     }
                 } else if (pieceBoard[row][col].getName().equals("whiteRook")
                         || pieceBoard[row][col].getName().equals("whiteQueen")) {
-                    if (!white) {
-                        return true;
+                    if (second) {
+                        if (!white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, true, true)) {
+                            if (!white) {
+                                return true;
+                            }
+                        }
                     }
                 } else {
                     break;
@@ -933,13 +1061,29 @@ public class ChessGUI {
             if (pieceBoard[row][col] != null) {
                 if (pieceBoard[row][col].getName().equals("blackRook")
                         || pieceBoard[row][col].getName().equals("blackQueen")) {
-                    if (white) {
-                        return true;
+                    if (second) {
+                        if (white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, false, true)) {
+                            if (white) {
+                                return true;
+                            }
+                        }
                     }
                 } else if (pieceBoard[row][col].getName().equals("whiteRook")
                         || pieceBoard[row][col].getName().equals("whiteQueen")) {
-                    if (!white) {
-                        return true;
+                    if (second) {
+                        if (!white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, true, true)) {
+                            if (!white) {
+                                return true;
+                            }
+                        }
                     }
                 } else {
                     break;
@@ -956,13 +1100,29 @@ public class ChessGUI {
             if (pieceBoard[row][col] != null) {
                 if (pieceBoard[row][col].getName().equals("blackRook")
                         || pieceBoard[row][col].getName().equals("blackQueen")) {
-                    if (white) {
-                        return true;
+                    if (second) {
+                        if (white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, false, true)) {
+                            if (white) {
+                                return true;
+                            }
+                        }
                     }
                 } else if (pieceBoard[row][col].getName().equals("whiteRook")
                         || pieceBoard[row][col].getName().equals("whiteQueen")) {
-                    if (!white) {
-                        return true;
+                    if (second) {
+                        if (!white) {
+                            return true;
+                        }
+                    } else {
+                        if (!inDanger(row, col, true, true)) {
+                            if (!white) {
+                                return true;
+                            }
+                        }
                     }
                 } else {
                     break;
@@ -978,13 +1138,29 @@ public class ChessGUI {
             if (col - 1 >= 0) {
                 if (pieceBoard[row + 2][col - 1] != null) {
                     if (pieceBoard[row + 2][col - 1].getName().equals("blackKnight")) {
-                        if (white) {
-                            return true;
+                        if (second) {
+                            if (white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row + 2, col - 1, false, true)) {
+                                if (white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                     if (pieceBoard[row + 2][col - 1].getName().equals("whiteKnight")) {
-                        if (!white) {
-                            return true;
+                        if (second) {
+                            if (!white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row + 2, col - 1, true, true)) {
+                                if (!white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
@@ -992,13 +1168,29 @@ public class ChessGUI {
             if (col + 1 <= 7) {
                 if (pieceBoard[row + 2][col + 1] != null) {
                     if (pieceBoard[row + 2][col + 1].getName().equals("blackKnight")) {
-                        if (white) {
-                            return true;
+                        if (second) {
+                            if (white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row + 2,col + 1, false, true)) {
+                                if (white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                     if (pieceBoard[row + 2][col + 1].getName().equals("whiteKnight")) {
-                        if (!white) {
-                            return true;
+                        if (second) {
+                            if (!white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row + 2, col + 1, true, true)) {
+                                if (!white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
@@ -1009,13 +1201,29 @@ public class ChessGUI {
             if (col - 2 >= 0) {
                 if (pieceBoard[row + 1][col - 2] != null) {
                     if (pieceBoard[row + 1][col - 2].getName().equals("blackKnight")) {
-                        if (white) {
-                            return true;
+                        if (second) {
+                            if (white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row + 1, col - 2, false, true)) {
+                                if (white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                     if (pieceBoard[row + 1][col - 2].getName().equals("whiteKnight")) {
-                        if (!white) {
-                            return true;
+                        if (second) {
+                            if (!white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row + 1, col - 2, true, true)) {
+                                if (!white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
@@ -1023,13 +1231,29 @@ public class ChessGUI {
             if (col + 2 <= 7) {
                 if (pieceBoard[row + 1][col + 2] != null) {
                     if (pieceBoard[row + 1][col + 2].getName().equals("blackKnight")) {
-                        if (white) {
-                            return true;
+                        if (second) {
+                            if (white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row + 1, col + 2, false, true)) {
+                                if (white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                     if (pieceBoard[row + 1][col + 2].getName().equals("whiteKnight")) {
-                        if (!white) {
-                            return true;
+                        if (second) {
+                            if (!white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row + 1, col + 2, true, true)) {
+                                if (!white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
@@ -1040,13 +1264,29 @@ public class ChessGUI {
             if (col - 2 >= 0) {
                 if (pieceBoard[row - 1][col - 2] != null) {
                     if (pieceBoard[row - 1][col - 2].getName().equals("blackKnight")) {
-                        if (white) {
-                            return true;
+                        if (second) {
+                            if (white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row - 1, col - 2, false, true)) {
+                                if (white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                     if (pieceBoard[row - 1][col - 2].getName().equals("whiteKnight")) {
-                        if (!white) {
-                            return true;
+                        if (second) {
+                            if (!white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row - 1, col - 2, true, true)) {
+                                if (!white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
@@ -1054,13 +1294,29 @@ public class ChessGUI {
             if (col + 2 <= 7) {
                 if (pieceBoard[row - 1][col + 2] != null) {
                     if (pieceBoard[row - 1][col + 2].getName().equals("blackKnight")) {
-                        if (white) {
-                            return true;
+                        if (second) {
+                            if (white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row - 1, col + 2, false, true)) {
+                                if (white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                     if (pieceBoard[row - 1][col + 2].getName().equals("whiteKnight")) {
-                        if (!white) {
-                            return true;
+                        if (second) {
+                            if (!white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row - 1, col + 2, true, true)) {
+                                if (!white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
@@ -1071,13 +1327,29 @@ public class ChessGUI {
             if (col - 1 >= 0) {
                 if (pieceBoard[row - 2][col - 1] != null) {
                     if (pieceBoard[row - 2][col - 1].getName().equals("blackKnight")) {
-                        if (white) {
-                            return true;
+                        if (second) {
+                            if (white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row - 2, col - 1, false, true)) {
+                                if (white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                     if (pieceBoard[row - 2][col - 1].getName().equals("whiteKnight")) {
-                        if (!white) {
-                            return true;
+                        if (second) {
+                            if (!white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row - 2, col - 1, true, true)) {
+                                if (!white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
@@ -1085,13 +1357,29 @@ public class ChessGUI {
             if (col + 1 <= 7) {
                 if (pieceBoard[row - 2][col + 1] != null) {
                     if (pieceBoard[row - 2][col + 1].getName().equals("blackKnight")) {
-                        if (white) {
-                            return true;
+                        if (second) {
+                            if (white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row - 2, col + 1, false, true)) {
+                                if (white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                     if (pieceBoard[row - 2][col + 1].getName().equals("whiteKnight")) {
-                        if (!white) {
-                            return true;
+                        if (second) {
+                            if (!white) {
+                                return true;
+                            }
+                        } else {
+                            if (!inDanger(row - 2, col + 1, true, true)) {
+                                if (!white) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
@@ -1105,7 +1393,7 @@ public class ChessGUI {
 
     public void checkmate() {
         //check to see if black king is under checkmate
-        if (inDanger(black_king.getRow(), black_king.getColumn(), false)) {
+        if (inDanger(black_king.getRow(), black_king.getColumn(), false, false)) {
             int row = black_king.getRow();
             int col = black_king.getColumn();
 
@@ -1116,7 +1404,7 @@ public class ChessGUI {
                             continue;
                         } else {
                             if (pieceBoard[row + i][col + j] == null) {
-                                if (!inDanger(row + i, col + j, false)) {
+                                if (!inDanger(row + i, col + j, false, false)) {
                                     return;
                                 }
                             }
@@ -1131,7 +1419,7 @@ public class ChessGUI {
         }
 
         //check to see if white king is under checkmate
-        if (inDanger(white_king.getRow(), white_king.getColumn(), true)) {
+        if (inDanger(white_king.getRow(), white_king.getColumn(), true, false)) {
             int row = white_king.getRow();
             int col = white_king.getColumn();
 
@@ -1142,7 +1430,7 @@ public class ChessGUI {
                             continue;
                         } else {
                             if (pieceBoard[row + i][col + j] == null) {
-                                if (!inDanger(row + i, col + j, true)) {
+                                if (!inDanger(row + i, col + j, true, false)) {
                                     return;
                                 }
                             }
