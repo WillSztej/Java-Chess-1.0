@@ -16,6 +16,6 @@ share the same computer and application in-person.
 
 I am planning to expand upon this project with an entirely new implemention. This new version will have the chess game 
 hosted on a webservice, to which you can invite friends to join your game and compete online. You can view the on-going 
-progession of this new project here on GitHub:
+progession of this new project here on GitHub: https://github.com/WillSztej/Java-Chess-2.0
 
 
